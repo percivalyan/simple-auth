@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { isAuthenticated } from '../utils/auth';
+import '../styles/Login.css';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-    const navigate = useNavigate();
-
-    if (isAuthenticated()) {
-        navigate('/dashboard');
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,29 +19,39 @@ const Login = () => {
         setMessage(data.message);
         if (data.token) {
             localStorage.setItem('token', data.token);
-            navigate('/dashboard');
+            window.location.href = '/dashboard'; // Redirect to dashboard
         }
     };
 
     return (
-        <div>
+        <div className="login-container">
             <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                />
-                <button type="submit">Login</button>
+            <form className="login-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        required
+                    />
+                </div>
+                <button type="submit" className="login-button">Login</button>
             </form>
-            {message && <p>{message}</p>}
+            {message && <p className="login-message">{message}</p>}
         </div>
     );
 };
