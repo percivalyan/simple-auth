@@ -10,6 +10,11 @@ import './App.css'; // Import your CSS file
 const App = () => {
     const navigate = useNavigate();
 
+    // Retrieve the username from localStorage or wherever it's stored
+    const getUsername = () => {
+        return localStorage.getItem('username') || 'User';
+    };
+
     return (
         <div className="app-container">
             <nav className="navbar">
@@ -23,14 +28,22 @@ const App = () => {
                             <li><Link className="nav-link" to="/login">Login</Link></li>
                         </>
                     ) : (
-                        <li>
-                            <button className="logout-button" onClick={() => { 
-                                logout(); 
-                                navigate('/login'); 
-                            }}>
-                                Logout
-                            </button>
-                        </li>
+                        <>
+                            <li className="username-display">
+                                <span>Welcome, {getUsername()}</span>
+                            </li>
+                            <li>
+                                <button 
+                                    className="logout-button" 
+                                    onClick={() => { 
+                                        logout(); 
+                                        navigate('/login'); 
+                                    }}
+                                >
+                                    Logout
+                                </button>
+                            </li>
+                        </>
                     )}
                 </ul>
             </nav>
