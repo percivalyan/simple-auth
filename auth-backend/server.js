@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -11,6 +10,22 @@ app.use(express.json());
 app.use(cors());
 
 const SECRET_KEY = process.env.SECRET_KEY;
+
+// Middleware untuk verifikasi token
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if (!token) {
+        return res.status(403).send({ message: 'No token provided.' });
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(500).send({ message: 'Failed to authenticate token.' });
+        }
+        req.userId = decoded.id;
+        next();
+    });
+};
 
 // Endpoint Registrasi
 app.post('/register', (req, res) => {
@@ -47,6 +62,20 @@ app.post('/login', (req, res) => {
 
         const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: '24h' });
         res.status(200).send({ message: 'Login successful', token });
+    });
+});
+
+// Endpoint untuk Mengambil Nama Pengguna Berdasarkan Token
+app.get('/username', verifyToken, (req, res) => {
+    const sql = 'SELECT username FROM users WHERE id = ?';
+    db.query(sql, [req.userId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Server error');
+        }
+        if (results.length === 0) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        res.status(200).send({ username: results[0].username });
     });
 });
 

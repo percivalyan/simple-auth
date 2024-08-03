@@ -10,7 +10,6 @@ import './App.css'; // Import your CSS file
 const App = () => {
     const navigate = useNavigate();
 
-    // Retrieve the username from localStorage or wherever it's stored
     const getUsername = () => {
         return localStorage.getItem('username') || 'User';
     };
@@ -37,6 +36,7 @@ const App = () => {
                                     className="logout-button" 
                                     onClick={() => { 
                                         logout(); 
+                                        localStorage.removeItem('username'); // Remove username on logout
                                         navigate('/login'); 
                                     }}
                                 >
